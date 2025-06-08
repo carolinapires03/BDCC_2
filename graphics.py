@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
@@ -106,7 +108,7 @@ def run_exploratory_function(func_name):
     globals()[func_name]()
 
 def plot_internamentos_por_paciente():
-    df = pd.read_csv("ICUSTAYS.csv")
+    df = pd.read_csv("tables/ICUSTAYS.csv")
     plt.figure(figsize=(10, 6))
     df['SUBJECT_ID'].value_counts().hist(bins=20, edgecolor='black', color='skyblue')
     plt.title("Number of ICU stays per patient")
@@ -117,7 +119,7 @@ def plot_internamentos_por_paciente():
     plt.close()
 
 def plot_distribuicao_etaria():
-    df = pd.read_csv("PATIENTS.csv")
+    df = pd.read_csv("tables/PATIENTS.csv")
     df['DOB'] = pd.to_datetime(df['DOB'], errors='coerce')
     df['ADMISSION'] = pd.to_datetime("2010-01-01")
     df['AGE'] = ((df['ADMISSION'] - df['DOB']).dt.days / 365.25).astype(int)
@@ -132,8 +134,8 @@ def plot_distribuicao_etaria():
     plt.close()
 
 def plot_top_diagnosticos():
-    df = pd.read_csv('DIAGNOSES_ICD.csv')
-    labels = pd.read_csv("D_ICD_DIAGNOSES.csv")
+    df = pd.read_csv('tables/DIAGNOSES_ICD.csv')
+    labels = pd.read_csv("tables/D_ICD_DIAGNOSES.csv")
     merged = df.merge(labels, on="ICD9_CODE", how="left")
     top = merged["SHORT_TITLE"].value_counts().head(10)
     plt.figure(figsize=(10, 6))
@@ -145,8 +147,8 @@ def plot_top_diagnosticos():
     plt.close()
 
 def plot_top_medicoes():
-    df = pd.read_csv("CHARTEVENTS_BIG.csv", usecols=["ITEMID"])
-    items = pd.read_csv("D_ITEMS.csv")
+    df = pd.read_csv("tables/CHARTEVENTS_BIG.csv", usecols=["ITEMID"])
+    items = pd.read_csv("tables/D_ITEMS.csv")
     top = df["ITEMID"].value_counts().head(10).rename_axis("ITEMID").reset_index(name="count")
     top = top.merge(items, on="ITEMID", how="left")
     plt.figure(figsize=(10, 6))
